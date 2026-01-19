@@ -1,7 +1,7 @@
 # ⚙️ Operational Performance Analysis
 
 ## Objective
-The goal of this project was to analyze operational workflow data to evaluate performance, identify bottlenecks, measure SLA compliance, and understand what drives cycle time and backlog growth. The focus is on consistency and repeatable execution rather than isolated “good” or “bad” weeks.
+The goal of this project was to analyze operational workflow data to evaluate performance, identify bottlenecks, measure SLA compliance, and understand what factors most impact cycle time and backlog growth. The analysis focuses on consistency, efficiency, and repeatable execution rather than isolated outcomes.
 
 ---
 
@@ -14,9 +14,9 @@ The goal of this project was to analyze operational workflow data to evaluate pe
 ---
 
 ## Data
-The dataset includes operational records such as work items, timestamps, statuses, workflow stages, priorities, and SLA targets. The data represents a real-world operations workflow and was sanitized to remove sensitive or identifying information.
+The dataset consists of operational work records representing real-world workflow activity. Data was sanitized to remove sensitive or identifying information while preserving the structure and behavior of a production operational dataset.
 
-Typical fields used in the analysis:
+The data includes:
 - Item ID
 - Created and completed timestamps
 - Status and workflow stage
@@ -24,7 +24,7 @@ Typical fields used in the analysis:
 - Team / location
 - SLA target and actual cycle time
 
-> Note: The dataset follows a structured schema intended to mirror production operational data (one record per work item, with standardized stages and timestamps).
+> Note: The dataset follows a structured schema with one record per work item and standardized workflow stages, designed to mirror typical operational tracking systems.
 
 ---
 
@@ -32,84 +32,98 @@ Typical fields used in the analysis:
 
 ### Step 1: Data Cleaning & Preparation (Excel / Power Query)
 
-Raw operational data required standardization and validation before it could be analyzed. Excel was used to review the dataset, validate the schema, and clean records in a transparent way. In this step, I:
+Raw operational data required validation and standardization before analysis. Excel was used as the primary environment to inspect, clean, and prepare the dataset. In this step, I:
 
 - Standardized status names, workflow stages, and category labels
-- Validated timestamps (created, started, completed) and removed invalid or incomplete records
-- Separated open vs. completed items to avoid skewing cycle-time metrics
-- Removed duplicates and enforced one record per operational item
-- Ensured required fields were present for SLA evaluation (priority, stage, timestamps, SLA target)
+- Validated created and completed timestamps and removed invalid or incomplete records
+- Differentiated open vs. completed items to prevent skewed cycle-time calculations
+- Removed duplicate records and enforced one record per operational item
+- Ensured all required fields were present for SLA evaluation
 
-**Output:** a clean, reliable dataset suitable for performance, cycle-time, and SLA analysis.
+**Output:** a clean, reliable dataset suitable for cycle-time, backlog, and SLA analysis.
 
 ---
 
-### Step 2: Metric Definition & KPI Calculation (Excel / PivotTables)
+### Step 2: Metric Definition & KPI Calculation (Excel)
 
-Rather than relying on raw volume alone, I defined metrics aligned with operational decision-making and service performance. Key KPIs included:
+Before analyzing performance, I defined metrics aligned with operational decision-making rather than relying on raw counts alone. Key KPIs included:
 
-- SLA compliance rate (overall and by segment)
+- SLA compliance rate
 - Average and median cycle time
-- Backlog volume and backlog growth over time
-- Aging buckets for open items (to flag SLA risk early)
-- Stage-level time contribution (where work spends time)
-- Completion trends over time (throughput)
+- Backlog volume and backlog growth
+- Aging buckets for open items
+- Stage-level time contribution
+- Completion trends over time
 
-These KPIs were calculated using PivotTables so results were easy to validate and explain without “black box” logic.
+These KPIs were calculated using Excel (Power Query and PivotTables) to ensure transparency, traceability, and ease of validation.
 
-**Output:** a structured KPI layer designed to support fair comparisons across teams, categories, priorities, and time periods.
-
----
-
-### Step 3: Analytics & Business Question Analysis
-
-Using the KPI layer, I analyzed workflow performance with a focus on efficiency and repeatability:
-
-- Evaluated SLA performance across priorities, categories, and locations to identify where misses were concentrated
-- Identified workflow stages contributing the most to total cycle time (bottleneck stages)
-- Analyzed backlog aging to surface risk areas before SLA breach rather than after the fact
-- Compared completion trends over time to identify operational strain, seasonality, or process improvements
-
-This approach avoids overemphasizing “how many got done” and instead highlights where the process slows down and why.
+**Output:** a structured KPI dataset designed to support fair comparisons across teams, priorities, categories, and time periods.
 
 ---
 
-### Step 4: Interpretation & Insights
+### Step 3: Analytical Processing & Validation (Python)
 
-Results were interpreted through an operational/business lens and documented with assumptions so they can be reviewed and reused:
+Python was used to support repeatable analysis and validation beyond Excel. This step focused on:
 
-- SLA misses were not evenly distributed; they clustered in specific workflow stages
-- High-priority work tended to meet SLA more consistently than lower-priority items (suggesting prioritization improves service outcomes)
-- A small subset of categories and locations accounted for a disproportionate share of long-aged backlog
-- Delays were frequently driven by handoffs and queue time rather than active execution time
+- Reproducing KPI calculations programmatically to validate Excel results
+- Performing grouped aggregations across categories, priorities, and workflow stages
+- Identifying distribution patterns and outliers in cycle time and backlog aging
+- Preparing analysis-ready tables for visualization
+
+Python allowed the analysis logic to be repeatable and scalable while maintaining alignment with the Excel-based KPIs.
 
 ---
 
-### Step 5: Reporting & Scalability (SQL / BI-ready outputs)
+### Step 4: Analytics & Business Question Analysis
 
-Findings were summarized in structured outputs designed to scale into SQL and BI tools (Power BI or Tableau). Emphasis was placed on:
+Using the defined KPIs, I analyzed operational performance with a focus on efficiency and consistency:
 
-- Choosing metrics that directly answer operational questions (service level, cycle time, backlog risk)
-- Documenting assumptions and limitations (open vs. completed items, timestamp validity rules)
-- Structuring outputs so they can be automated later (refreshable queries and consistent dimensions)
+- Evaluated SLA performance across priorities, categories, and locations
+- Identified workflow stages contributing the largest share of total cycle time
+- Analyzed backlog aging to surface risk areas before SLA breach
+- Reviewed completion trends over time to identify operational strain or improvement
 
-**Output:** clear, business-relevant insights backed by documented metrics and scalable data design.
+This approach avoids overemphasizing volume alone and instead highlights sustainable, repeatable performance.
+
+---
+
+### Step 5: Visualization & Insight Delivery (Tableau)
+
+Tableau was used to translate the KPI outputs into clear, interpretable visualizations. Dashboards were designed to support quick understanding by operational stakeholders.
+
+Key design choices included:
+- Clear separation between SLA performance, cycle time, and backlog views
+- Use of simple, consistent visual encodings to avoid visual bias
+- Interactive filters to compare teams, categories, and time periods
+- Tooltips to provide context without cluttering the main visuals
+
+The final dashboards emphasize clarity, interpretability, and operational relevance.
+
+---
+
+### Step 6: Reporting & Scalability
+
+Findings were documented with clear metric definitions, assumptions, and limitations. The dataset and KPI structure were designed to support future expansion, automation, and deeper analysis.
+
+**Output:** actionable operational insights supported by a scalable, well-documented data model.
 
 ---
 
 ## Results
-- Identified the workflow stage(s) contributing the largest share of cycle time, highlighting where process changes would have the biggest impact  
-- Found that SLA misses were concentrated in specific categories/locations rather than spread evenly, helping narrow where to focus operational attention  
-- Built backlog aging buckets to flag items at risk *before* SLA breach, enabling proactive prioritization instead of reactive cleanup  
-- Produced a BI-ready KPI layer (SLA rate, cycle time, backlog trends, stage contribution) that can be refreshed and extended as new data is added  
+- Identified specific workflow stages that consistently contributed the largest share of overall cycle time
+- Found that SLA misses were concentrated within a limited number of categories and locations rather than evenly distributed
+- Observed that high-priority work generally met SLA targets more consistently than lower-priority items
+- Highlighted backlog aging patterns that can be used to proactively flag SLA risk before breach
+
+These results provide a clearer view of where operational improvements would have the greatest impact.
 
 ---
 
 ## Tools
-- **Excel / Power Query** – cleaned and standardized operational data, validated timestamps, handled incomplete records, and produced analysis-ready tables  
+- **Excel / Power Query** – cleaned and standardized raw operational data, validated timestamps, handled missing or invalid records, and prepared analysis-ready datasets  
 - **Pivot Tables** – calculated KPIs including SLA compliance, cycle time, backlog aging, stage-level contribution, and completion trends  
-- **SQL (optional/scalable layer)** – supports repeatable aggregation and a clean KPI dataset for dashboards and future automation  
-- **Dashboarding (Tableau or Power BI)** – created an interactive view of SLA performance, bottlenecks, backlog risk, and trends over time  
-- **Operational Metrics Design** – defined KPIs aligned to real operational decisions rather than raw counts  
-- **Documentation** – documented assumptions, metric definitions, and limitations so results are easy to audit and reuse  
+- **Python** – performed repeatable data transformations, KPI validation, and exploratory analysis to support scalability and consistency  
+- **Tableau** – built interactive dashboards to visualize operational performance, bottlenecks, SLA risk, and trends over time  
+- **Operational Metrics Design** – defined KPIs aligned with real operational decision-making rather than raw volume  
+- **Documentation** – documented assumptions, metric definitions, and data limitations for transparency and reuse  
 
